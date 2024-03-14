@@ -18,11 +18,21 @@ public class GroovyUtil {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(GroovyUtil.class);
 
+    // 用于缓存Groovy脚本的类
     private static final Map<String, Class> SCRIPT_CLASS_CACHE = new ConcurrentHashMap<String, Class>();
 
+    // 私有构造方法，防止实例化
     private GroovyUtil() {
     }
 
+    /**
+     * 执行Groovy表达式并返回结果
+     *
+     * @param expression Groovy表达式
+     * @param dataMap    数据映射
+     * @return 执行结果
+     * @throws Exception 执行过程中的异常
+     */
     public static Object execute(String expression, Map<String, Object> dataMap) throws Exception {
         if (StringUtils.isBlank(expression)) {
             LOGGER.warn("calculate: expression is empty");
@@ -40,6 +50,13 @@ public class GroovyUtil {
         }
     }
 
+    /**
+     * 创建Groovy脚本
+     *
+     * @param groovyExpression Groovy表达式
+     * @param binding          绑定对象
+     * @return Groovy脚本
+     */
     private static Script createScript(String groovyExpression, Binding binding) {
         Script script;
         if (SCRIPT_CLASS_CACHE.containsKey(groovyExpression)) {
@@ -52,6 +69,12 @@ public class GroovyUtil {
         return script;
     }
 
+    /**
+     * 创建绑定对象
+     *
+     * @param infos 数据映射
+     * @return 绑定对象
+     */
     private static Binding createBinding(Map<String, Object> infos) {
         Binding binding = new Binding();
         if (!infos.isEmpty()) {

@@ -40,35 +40,35 @@ public class ExclusiveGatewayExecutor extends ElementExecutor implements Initial
     private List<HookService> hookServices;
 
     /**
-     * Update data map: invoke hook service to update data map
-     * You can implement HookService and all implementations of 'HookService' will be executed.
-     * Param: one of flowElement's properties
+     * 更新数据映射：调用钩子服务更新数据映射
+     * 您可以实现HookService接口，所有实现'HookService'接口的实例都将被执行。
+     * 参数：flowElement的属性之一
      */
     @Override
     protected void doExecute(RuntimeContext runtimeContext) throws ProcessException {
-        // 1.get hook param
+        // 1. 获取钩子参数
         FlowElement flowElement = runtimeContext.getCurrentNodeModel();
         String hookInfoParam = FlowModelUtil.getHookInfos(flowElement);
 
-        // 2.ignore while properties is empty
+        // 2. 当属性为空时忽略
         if (StringUtils.isBlank(hookInfoParam)) {
             return;
         }
 
-        // 3.invoke hook and get data result
+        // 3. 调用钩子并获取数据结果
         Map<String, InstanceData> hookInfoValueMap = getHookInfoValueMap(runtimeContext.getFlowInstanceId(), hookInfoParam, runtimeContext.getCurrentNodeInstance().getNodeKey(), runtimeContext.getCurrentNodeInstance().getNodeInstanceId());
         LOGGER.info("doExecute getHookInfoValueMap.||hookInfoValueMap={}", hookInfoValueMap);
         if (MapUtils.isEmpty(hookInfoValueMap)) {
             LOGGER.warn("doExecute: hookInfoValueMap is empty.||flowInstanceId={}||hookInfoParam={}||nodeKey={}",
-                runtimeContext.getFlowInstanceId(), hookInfoParam, flowElement.getKey());
+                    runtimeContext.getFlowInstanceId(), hookInfoParam, flowElement.getKey());
             return;
         }
 
-        // 4.merge data to current dataMap
+        // 4. 合并数据到当前数据映射
         Map<String, InstanceData> dataMap = runtimeContext.getInstanceDataMap();
         dataMap.putAll(hookInfoValueMap);
 
-        // 5.save data
+        // 5. 保存数据
         if (MapUtils.isNotEmpty(dataMap)) {
             String instanceDataId = saveInstanceDataPO(runtimeContext);
             runtimeContext.setInstanceDataId(instanceDataId);
@@ -82,12 +82,12 @@ public class ExclusiveGatewayExecutor extends ElementExecutor implements Initial
                 List<InstanceData> list = service.invoke(flowInstanceId, hookInfoParam, nodeKey, nodeInstanceId);
                 if (CollectionUtils.isEmpty(list)) {
                     LOGGER.warn("hook service invoke result is empty, serviceName={}, flowInstanceId={}, hookInfoParam={}",
-                        service.getClass().getName(), flowInstanceId, hookInfoParam);
+                            service.getClass().getName(), flowInstanceId, hookInfoParam);
                 }
                 dataList.addAll(list);
             } catch (Exception e) {
                 LOGGER.warn("hook service invoke fail, serviceName={}, flowInstanceId={}, hookInfoParam={}",
-                    service.getClass().getName(), flowInstanceId, hookInfoParam);
+                        service.getClass().getName(), flowInstanceId, hookInfoParam);
             }
         }
         return InstanceDataUtil.getInstanceDataMap(dataList);
@@ -121,9 +121,9 @@ public class ExclusiveGatewayExecutor extends ElementExecutor implements Initial
     }
 
     /**
-     * Calculate unique outgoing
-     * Expression: one of flowElement's properties
-     * Input: data map
+     * 计算唯一的出口
+     * 表达式：flowElement的属性之一
+     * 输入：数据映射
      *
      * @return
      * @throws Exception
@@ -131,7 +131,7 @@ public class ExclusiveGatewayExecutor extends ElementExecutor implements Initial
     @Override
     protected RuntimeExecutor getExecuteExecutor(RuntimeContext runtimeContext) throws ProcessException {
         FlowElement nextNode = calculateNextNode(runtimeContext.getCurrentNodeModel(),
-            runtimeContext.getFlowElementMap(), runtimeContext.getInstanceDataMap());
+                runtimeContext.getFlowElementMap(), runtimeContext.getInstanceDataMap());
 
         runtimeContext.setCurrentNodeModel(nextNode);
         return executorFactory.getElementExecutor(nextNode);
@@ -147,7 +147,7 @@ public class ExclusiveGatewayExecutor extends ElementExecutor implements Initial
             return;
         }
 
-        // init hook services by Spring application context
+        // 通过Spring应用程序上下文初始化钩子服务
         synchronized (ExclusiveGatewayExecutor.class) {
             if (hookServices != null) {
                 return;

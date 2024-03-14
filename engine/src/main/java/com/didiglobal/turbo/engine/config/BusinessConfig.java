@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * @Author: james zhangxiao
  * @Date: 11/30/22
- * @Description:
+ * @Description: 业务配置
  */
 @Component
 public class BusinessConfig {
@@ -17,18 +17,18 @@ public class BusinessConfig {
     @Value("${callActivity.nested.level:#{null}}")
     private String callActivityNestedLevel;
 
-    public static final int COMPUTING_FLOW_NESTED_LEVEL = -1; // computing flow nested level
-    public static final int MIN_FLOW_NESTED_LEVEL = 0; // Flow don't use CallActivity node
+    public static final int COMPUTING_FLOW_NESTED_LEVEL = -1; // 计算流程嵌套级别
+    public static final int MIN_FLOW_NESTED_LEVEL = 0; // 流程不使用CallActivity节点
     public static final int MAX_FLOW_NESTED_LEVEL = 10;
 
     /**
-     * Query callActivityNestedLevel according to caller
+     * 根据调用者查询callActivityNestedLevel
      * <p>
-     * e.g.1 if flowA quote flowB, flowA callActivityNestedLevel equal to 1.
-     * e.g.2 if flowA quote flowB, flowB quote flowC, flowA callActivityNestedLevel equal to 2.
+     * 例如：如果flowA引用了flowB，则flowA的callActivityNestedLevel等于1。
+     * 例如：如果flowA引用了flowB，flowB引用了flowC，则flowA的callActivityNestedLevel等于2。
      *
-     * @param caller caller
-     * @return -1 if unLimited
+     * @param caller 调用者
+     * @return -1 表示无限制
      */
     public int getCallActivityNestedLevel(String caller) {
         if (StringUtils.isBlank(callActivityNestedLevel)) {

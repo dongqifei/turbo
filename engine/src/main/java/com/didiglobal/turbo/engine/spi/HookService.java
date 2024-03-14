@@ -5,7 +5,7 @@ import com.didiglobal.turbo.engine.model.InstanceData;
 import java.util.List;
 
 /**
- * <p> HookService </p>
+ * <p> 钩子服务 </p>
  *
  * @author lijinghao
  * @version v1.0
@@ -14,14 +14,14 @@ import java.util.List;
 public interface HookService {
 
     /**
-     * Invoke hook service, used to perform data refresh operations on the gateway node.
-     * Usage: Implement the interface and give the instance to Spring for management
+     * 调用钩子服务，用于在网关节点上执行数据刷新操作。
+     * 用法：实现接口并将实例交给Spring进行管理
      *
-     * @param flowInstanceId runtime flow instance id
-     * @param nodeInstanceId running node's instance id
-     * @param nodeKey        running node's key
-     * @param hookInfoParam  some info , you can refresh
-     * @return new infos
+     * @param flowInstanceId 运行时流程实例ID
+     * @param nodeInstanceId 运行中节点实例ID
+     * @param nodeKey        运行中节点的关键字
+     * @param hookInfoParam 一些信息，您可以刷新
+     * @return 新的信息
      */
     List<InstanceData> invoke(String flowInstanceId, String nodeInstanceId, String nodeKey, String hookInfoParam);
 }
